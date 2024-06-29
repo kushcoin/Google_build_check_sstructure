@@ -1,0 +1,66 @@
+import unittest
+from unittest.mock import patch
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from app import app, db  # Adjust the import according to your file structure
+import datetime
+
+class TestDatabaseCreation(unittest.TestCase):
+
+    def setUp(self):
+        self.app = app
+        self.app.config['TESTING'] = True
+        self.client = self.app.test_client()
+
+    @patch('your_flask_app.db.create_all')
+    def test_create_tables_with_missing_engine(self, mock_create_all):
+        # Simulate missing engine by raising an exception
+        mock_create_all.side_effect = Exception("Missing SQLAlchemy engine")
+        
+        with self.app.app_context():
+            with self.assertRaises(Exception) as context:
+                db.create_all()
+            self.assertTrue("Missing SQLAlchemy engine" in str(context.exception))
+
+    @patch('your_flask_app.db.create_all')
+    def test_create_tables_with_invalid_engine(self, mock_create_all):
+        # Simulate invalid engine by raising an exception
+        mock_create_all.side_effect = Exception("Invalid SQLAlchemy engine")
+        
+        with self.app.app_context():
+            with self.assertRaises(Exception) as context:
+                db.create_all()
+            self.assertTrue("Invalid SQLAlchemy engine" in str(context.exception))
+
+    @patch('your_flask_app.db.create_all')
+    def test_create_tables_with_no_engine_configured(self, mock_create_all):
+        # Simulate no engine configured by raising an exception
+        mock_create_all.side_effect = Exception("No SQLAlchemy engine configured")
+        
+        with self.app.app_context():
+            with self.assertRaises(Exception) as context:
+                db.create_all()
+            self.assertTrue("No SQLAlchemy engine configured" in str(context.exception))
+
+    @patch('your_flask_app.db.create_all')
+    def test_create_tables_with_invalid_database_uri(self, mock_create_all):
+        # Simulate invalid database URI by raising an exception
+        mock_create_all.side_effect = Exception("Invalid database URI")
+        
+        with self.app.app_context():
+            with self.assertRaises(Exception) as context:
+                db.create_all()
+            self.assertTrue("Invalid database URI" in str(context.exception))
+
+    @patch('your_flask_app.db.create_all')
+    def test_create_tables_with_database_connection_error(self, mock_create_all):
+        # Simulate database connection error by raising an exception
+        mock_create_all.side_effect = Exception("Database connection error")
+        
+        with self.app.app_context():
+            with self.assertRaises(Exception) as context:
+                db.create_all()
+            self.assertTrue("Database connection error" in str(context.exception))
+
+if __name__ == '__main__':
+    unittest.main()

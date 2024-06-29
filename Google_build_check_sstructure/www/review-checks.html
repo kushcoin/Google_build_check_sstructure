@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Review Checks</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <script src="/js/auth.js"></script>
+  </head>
+  <body>
+    <header>
+      <h1>Review Checks</h1>
+      <nav id="navbar"></nav>
+    </header>
+    <main>
+      <div id="checks-list"></div>
+    </main>
+    <footer>
+      <p>&copy; 2023 Joint Check Service. All rights reserved.</p>
+    </footer>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        fetch("navbar.html")
+          .then((response) => response.text())
+          .then((data) => {
+            document.getElementById("navbar").innerHTML = data;
+          });
+
+        loadChecks();
+      });
+
+      async function loadChecks() {
+        const checksList = document.getElementById("checks-list");
+
+        try {
+          const response = await fetch("/review-checks");
+          const checks = await response.json();
+
+          checksList.innerHTML = checks
+            .map(
+              (check) => `
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Check from ${check.payer} to ${check.payee}</h5>
+                            <p class="card-text">Amount: $${check.amount}</p>
+                            <button class="btn btn-success" onclick="approveCheck(${check.id})">Approve</button>
+                        </div>
+                    </div>
+                `
+            )
+            .join("");
+        } catch (error) {
+          checksList.innerHTML =
+            "<p>Error loading checks. Please try again.</p>";
+        }
+      }
+
+      async function approveCheck(checkId) {
+        try {
+          const response = await fetch("/approve-check", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ check_id: checkId }),
+          });
+
+          if (!response.ok) {
+            const result = await response.json();
+            alert(result.message);
+            return;
+          }
+
+          const result = await response.json();
+          alert(
+            `Check approved successfully: ${result.transaction_receipt.transactionHash}`
+          );
+          loadChecks();
+        } catch (error) {
+          alert("Error approving check. Please try again.");
+        }
+      }
+    </script>
+  </body>
+</html>
