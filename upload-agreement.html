@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload Agreement</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/ipfs-http-client/dist/index.min.js"></script>
+    <script src="/js/auth.js"></script>
+  </head>
+  <body>
+    <header>
+      <h1>Upload Agreement</h1>
+      <nav id="navbar"></nav>
+    </header>
+    <main>
+      <div class="form-group">
+        <label for="agreementFile">Upload Agreement File:</label>
+        <input
+          type="file"
+          id="agreementFile"
+          title="Choose an agreement file to upload"
+        />
+      </div>
+      <button id="uploadAgreementButton" class="btn-primary">
+        Upload Agreement
+      </button>
+    </main>
+    <footer>
+      <p>&copy; 2023 Joint Check Service. All rights reserved.</p>
+    </footer>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        fetch("navbar.html")
+          .then((response) => response.text())
+          .then((data) => {
+            document.getElementById("navbar").innerHTML = data;
+          });
+      });
+    </script>
+  </body>
+</html>

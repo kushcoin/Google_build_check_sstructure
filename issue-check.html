@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Issue Check</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <script src="/js/auth.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+  </head>
+  <body>
+    <header>
+      <h1>Issue Check</h1>
+      <nav id="navbar"></nav>
+    </header>
+    <main>
+      <form id="issueCheckForm">
+        <div class="form-group">
+          <label for="payer">Payer:</label>
+          <input type="text" id="payer" name="payer" required />
+        </div>
+        <div class="form-group">
+          <label for="recipient">Recipient:</label>
+          <select id="recipient" name="recipient" required></select>
+        </div>
+        <div class="form-group">
+          <label for="amount">Amount:</label>
+          <input type="number" id="amount" name="amount" required />
+        </div>
+        <button type="submit" class="btn-primary">Issue Check</button>
+      </form>
+    </main>
+    <footer>
+      <p>&copy; 2023 Joint Check Service. All rights reserved.</p>
+    </footer>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        fetch("navbar.html")
+          .then((response) => response.text())
+          .then((data) => {
+            document.getElementById("navbar").innerHTML = data;
+          });
+
+        loadRecipients();
+      });
+
+      async function loadRecipients() {
+        const recipientSelect = document.getElementById("recipient");
+
+        try {
+          const response = await fetch("/recipients");
+          const recipients = await response.json();
+
+          recipientSelect.innerHTML = recipients
+            .map(
+              (recipient) => `
+                    <option value="${recipient.id}">${recipient.name}</option>
+                `
+            )
+            .join("");
+        } catch (error) {
+          recipientSelect.innerHTML =
+            "<option>Error loading recipients. Please try again.</option>";
+        }
+      }
+    </script>
+  </body>
+</html>
